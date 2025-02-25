@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const downloadBtn = document.getElementById("downloadBtn");
+  const showBtn = document.getElementById("showBtn");
   const statusDiv = document.getElementById("status");
 
-  downloadBtn.addEventListener("click", async function () {
+  showBtn.addEventListener("click", async function () {
     const totalCues = document.getElementById("totalCues").value;
     const delay = document.getElementById("delay").value;
 
     statusDiv.style.display = "block";
-    statusDiv.textContent = "Processing transcript...";
+    statusDiv.textContent = "Showing transcript...";
     statusDiv.style.backgroundColor = "#e8f0fe";
 
     try {
@@ -20,12 +20,15 @@ document.addEventListener("DOMContentLoaded", function () {
       // Execute the content script on the active tab
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: injectTranscriptDownloader,
+        function: injectShowTranscript,
         args: [parseInt(totalCues), parseInt(delay)],
       });
 
-      statusDiv.textContent = "Transcript download initiated successfully!";
+      statusDiv.textContent = "Transcript viewer activated!";
       statusDiv.style.backgroundColor = "#d4edda";
+
+      // Close the popup after a short delay
+      setTimeout(() => window.close(), 1500);
     } catch (error) {
       console.error(error);
       statusDiv.textContent = "Error: " + error.message;
@@ -34,48 +37,20 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // This function will be injected into the page
-  function injectTranscriptDownloader(totalCues, delay) {
-    async function loadAndCaptureTranscript() {
-      let transcriptText = "";
-
-      // First, try to find if there's a transcript container to determine max cues
-      const containers = document.querySelectorAll('[id^="transcript-cue-"]');
-      if (containers.length > 0 && containers.length > totalCues) {
-        totalCues = containers.length;
-        console.log(`Found ${totalCues} transcript cues on the page`);
-      }
-
-      for (let i = 0; i <= totalCues; i++) {
-        let element = document.querySelector(`#transcript-cue-${i}`);
-        if (element) {
-          // Scroll the element into view
-          element.scrollIntoView();
-          await new Promise((resolve) => setTimeout(resolve, delay)); // Wait for it to load fully
-          transcriptText += element.innerText + "\n";
-        }
-      }
-
-      if (transcriptText) {
-        console.log("Transcript captured successfully");
-        let blob = new Blob([transcriptText], { type: "text/plain" });
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "transcript.txt";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-
-        return true;
-      } else {
-        console.log("No transcript elements found.");
-        alert(
-          "No transcript elements found. Make sure you're on a page with a transcript."
-        );
-        return false;
-      }
+  function injectShowTranscript(totalCues, delay) {
+    // If there's a global function to show transcript, use it
+    if (typeof findVideoAndShowTranscript === "function") {
+      findVideoAndShowTranscript(totalCues, delay);
+      return true;
     }
 
-    return loadAndCaptureTranscript();
+    // Otherwise, we'll trigger the content script via message
+    chrome.runtime.sendMessage({
+      action: "showTranscript",
+      totalCues: totalCues,
+      delay: delay,
+    });
+
+    return true;
   }
 });

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Transcript Downloader",
+  "name": "Video Transcript Viewer",
   "version": "1.0",
-  "description": "Download transcripts from video platforms like Vimeo",
+  "description": "Display video transcripts alongside videos similar to YouTube's transcript feature",
   "permissions": ["activeTab", "scripting", "contextMenus"],
   "background": {
     "service_worker": "background.js"
@@ -13,7 +13,8 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "css": ["transcript.css"]
     }
   ]
 }

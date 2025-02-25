@@ -1,14 +1,16 @@
-# Transcript Downloader Chrome Extension
+# Video Transcript Viewer Chrome Extension
 
-A Chrome extension that helps you download transcripts from video websites such as Vimeo.
+A Chrome extension that displays video transcripts alongside videos, similar to YouTube's transcript feature.
 
 ## Features
 
-- Downloads transcript text from websites that use transcript cue elements
-- Automatically scrolls through transcript elements to capture all content
-- Adjustable parameters for total cues and delay time
+- Displays transcript text alongside videos in a convenient side panel
+- Auto-highlights the current transcript section as the video plays
+- Click on any transcript segment to jump to that part of the video
+- Search within the transcript to find specific content
+- Toggle timestamps on/off
+- Works on YouTube and other video sites with transcript elements
 - Context menu option for quick access
-- Works best on Vimeo video pages with transcripts enabled
 
 ## Installation
 
@@ -22,23 +24,43 @@ A Chrome extension that helps you download transcripts from video websites such 
 
 ### Basic Usage
 
-1. Navigate to a video website with a transcript (like Vimeo)
-2. If using Vimeo, make sure to:
-   - Open the transcript panel
-   - Go to transcript settings and turn off timestamps (for cleaner output)
-3. Click the Transcript Downloader icon in your Chrome toolbar
-4. Adjust settings if needed:
-   - Total Transcript Cues: Increase this number if you have a longer video/transcript
-   - Delay between cues: Increase this if transcript elements aren't loading properly
-5. Click "Download Transcript"
-6. The transcript will be saved as a text file
+1. Navigate to a video website (like YouTube)
+2. Click the Video Transcript Viewer icon in your Chrome toolbar
+3. Click "Show Transcript Panel"
+4. The transcript panel will appear on the right side of the screen
+5. As the video plays, the current section of the transcript will be highlighted
+6. Click on any transcript segment to jump to that part of the video
+7. Use the search box to find specific text in the transcript
+
+### On YouTube
+
+The extension will automatically detect when you're on a YouTube video page and show a transcript button. When you click it:
+
+1. If a transcript is available, it will be displayed in the panel
+2. The panel will highlight the current segment being spoken in the video
+3. You can click on any segment to jump to that part of the video
 
 ### Context Menu Option
 
-You can also right-click anywhere on the page and select "Download Transcript" from the context menu.
+You can also right-click anywhere on a video page and select "Show Video Transcript" from the context menu.
+
+## Settings
+
+From the extension popup, you can adjust:
+
+- **Max Transcript Cues**: Increase this number if you have a longer video/transcript
+- **Delay between cues**: Adjust if transcript elements aren't loading properly
 
 ## Troubleshooting
 
-- If no transcript is found, make sure you're on a page that has transcript elements with IDs in the format `transcript-cue-X`
-- If the transcript is incomplete, try increasing the "Total Transcript Cues" value
-- If the transcript contains errors, try increasing the "Delay between cues" value
+- If no transcript is found, the extension will display a message in the panel
+- Some websites may not have transcript data accessible to the extension
+- If the transcript is not highlighting in sync with the video, try refreshing the page
+
+## License
+
+This project is open source and available under the MIT License.
+
+## Credits
+
+Created by [Your Name]

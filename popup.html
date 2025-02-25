@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Transcript Downloader</title>
+    <title>Video Transcript Viewer</title>
     <style>
       body {
         width: 320px;
@@ -48,14 +48,19 @@
         background-color: #f8f9fa;
         display: none;
       }
+      .instructions {
+        font-size: 12px;
+        margin-top: 15px;
+        color: #666;
+      }
     </style>
   </head>
   <body>
-    <h2>Transcript Downloader</h2>
+    <h2>Video Transcript Viewer</h2>
 
     <div class="input-group">
-      <label for="totalCues">Total Transcript Cues:</label>
-      <input type="number" id="totalCues" value="237" min="1" />
+      <label for="totalCues">Max Transcript Cues:</label>
+      <input type="number" id="totalCues" value="500" min="1" />
     </div>
 
     <div class="input-group">
@@ -63,9 +68,23 @@
       <input type="number" id="delay" value="200" min="100" />
     </div>
 
-    <button id="downloadBtn">Download Transcript</button>
+    <button id="showBtn">Show Transcript Panel</button>
 
     <div id="status" class="status"></div>
+
+    <div class="instructions">
+      <p><strong>How it works:</strong></p>
+      <ul>
+        <li>
+          Click "Show Transcript Panel" to view the transcript alongside the
+          video
+        </li>
+        <li>
+          Click on any transcript segment to jump to that part of the video
+        </li>
+        <li>Use the search box to find specific text in the transcript</li>
+      </ul>
+    </div>
 
     <script src="popup.js"></script>
   </body>

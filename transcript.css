@@ -48,6 +48,54 @@
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.search-mode-toggle {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.search-mode-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.search-mode-label input {
+  margin-right: 5px;
+  width: auto;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.searching-indicator {
+  padding: 12px;
+  text-align: center;
+  color: #555;
+  font-style: italic;
+}
+
+.no-results {
+  padding: 12px;
+  text-align: center;
+  color: #666;
+}
+
+.search-error {
+  padding: 12px;
+  text-align: center;
+  color: #f44336;
+}
+
+.match-score {
+  font-size: 10px;
+  color: #065fd4;
+  margin-left: auto;
+  white-space: nowrap;
 }
 
 .transcript-content {

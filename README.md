@@ -7,6 +7,8 @@ A Chrome extension that displays video transcripts alongside videos, similar to 
 - Displays transcript text alongside videos in a convenient side panel
 - Auto-highlights the current transcript section as the video plays
 - Click on any transcript segment to jump to that part of the video
+- **AI-powered semantic search** to find content using natural language queries
+- Toggle between keyword search and semantic search modes
 - Search within the transcript to find specific content
 - Toggle timestamps on/off
 - Works on YouTube and other video sites with transcript elements
@@ -32,6 +34,21 @@ A Chrome extension that displays video transcripts alongside videos, similar to 
 6. Click on any transcript segment to jump to that part of the video
 7. Use the search box to find specific text in the transcript
 
+### Semantic Search
+
+The extension includes an AI-powered semantic search feature that allows you to search using natural language:
+
+1. Make sure the "AI Semantic Search" checkbox is selected (it's on by default)
+2. Type natural language queries like:
+   - "discussion about climate change"
+   - "when they talk about the future plans"
+   - "find the part where they mention statistics"
+3. The extension will analyze your query and show the most relevant transcript segments
+4. Each result includes a match score to indicate relevance
+5. Click any result to jump to that part of the video
+
+For exact keyword matching, uncheck the "AI Semantic Search" option.
+
 ### On YouTube
 
 The extension will automatically detect when you're on a YouTube video page and show a transcript button. When you click it:
@@ -56,6 +73,7 @@ From the extension popup, you can adjust:
 - If no transcript is found, the extension will display a message in the panel
 - Some websites may not have transcript data accessible to the extension
 - If the transcript is not highlighting in sync with the video, try refreshing the page
+- The semantic search uses a simple algorithm that runs entirely in your browser. It works best with clear, concise queries.
 
 ## License
 

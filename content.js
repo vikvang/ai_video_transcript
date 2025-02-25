@@ -8,6 +8,7 @@ let transcriptButton = null;
 let hideTimestamps = false;
 let videoElement = null;
 let activeTimestamp = null;
+let useSemanticSearch = true; // Default to semantic search
 
 // Listen for messages from the popup
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -78,12 +79,41 @@ function createTranscriptPanel() {
 
   const searchInput = document.createElement("input");
   searchInput.type = "text";
-  searchInput.placeholder = "Search in transcript";
+  searchInput.placeholder = "Search in transcript (try natural language)";
   searchInput.addEventListener("input", function () {
-    filterTranscript(this.value);
+    const searchType = useSemanticSearch ? "semantic" : "keyword";
+    filterTranscript(this.value, searchType);
   });
 
   search.appendChild(searchInput);
+
+  // Add search mode toggle
+  const searchModeToggle = document.createElement("div");
+  searchModeToggle.className = "search-mode-toggle";
+
+  const semanticLabel = document.createElement("label");
+  semanticLabel.className = "search-mode-label";
+
+  const semanticCheckbox = document.createElement("input");
+  semanticCheckbox.type = "checkbox";
+  semanticCheckbox.checked = useSemanticSearch;
+  semanticCheckbox.addEventListener("change", function () {
+    useSemanticSearch = this.checked;
+    searchInput.placeholder = useSemanticSearch
+      ? "Search in transcript (try natural language)"
+      : "Search in transcript (keyword)";
+
+    if (searchInput.value) {
+      const searchType = useSemanticSearch ? "semantic" : "keyword";
+      filterTranscript(searchInput.value, searchType);
+    }
+  });
+
+  semanticLabel.appendChild(semanticCheckbox);
+  semanticLabel.appendChild(document.createTextNode("AI Semantic Search"));
+
+  searchModeToggle.appendChild(semanticLabel);
+  search.appendChild(searchModeToggle);
 
   // Create content container
   const content = document.createElement("div");
@@ -166,8 +196,8 @@ function updateTranscriptDisplay() {
   });
 }
 
-// Filter transcript based on search
-function filterTranscript(query) {
+// Filter transcript based on search query
+function filterTranscript(query, searchType = "semantic") {
   const content = transcriptPanel.querySelector(".transcript-content");
   const cues = content.querySelectorAll(".transcript-cue");
 
@@ -180,12 +210,161 @@ function filterTranscript(query) {
 
   query = query.toLowerCase();
 
+  if (searchType === "keyword") {
+    // Simple keyword search
+    cues.forEach((cue) => {
+      const text = cue
+        .querySelector(".transcript-text")
+        .textContent.toLowerCase();
+      cue.style.display = text.includes(query) ? "flex" : "none";
+    });
+  } else {
+    // Semantic search
+    performSemanticSearch(query, cues);
+  }
+}
+
+// Perform semantic search on transcript data
+async function performSemanticSearch(query, cues) {
+  // First show a "searching..." indicator
   cues.forEach((cue) => {
-    const text = cue
-      .querySelector(".transcript-text")
-      .textContent.toLowerCase();
-    cue.style.display = text.includes(query) ? "flex" : "none";
+    cue.style.display = "none";
   });
+
+  const content = transcriptPanel.querySelector(".transcript-content");
+  const searchingIndicator = document.createElement("div");
+  searchingIndicator.className = "searching-indicator";
+  searchingIndicator.textContent = "Searching...";
+  content.appendChild(searchingIndicator);
+
+  try {
+    // Get the transcript text segments as an array
+    const segments = Array.from(transcriptData).map((cue) => ({
+      id: cue.id,
+      time: cue.time,
+      text: cue.text,
+    }));
+
+    // Simple TF-IDF based search
+    const results = simpleTfIdfSearch(query, segments);
+
+    // Remove searching indicator
+    content.removeChild(searchingIndicator);
+
+    // Show matching results and highlight them
+    if (results.length > 0) {
+      // Show only the matching cues
+      cues.forEach((cue) => {
+        const cueTime = parseFloat(cue.dataset.time);
+        const result = results.find((r) => r.time === cueTime);
+
+        if (result) {
+          cue.style.display = "flex";
+          // Add a score indicator
+          const scoreIndicator = document.createElement("div");
+          scoreIndicator.className = "match-score";
+          scoreIndicator.textContent = `Match: ${Math.round(
+            result.score * 100
+          )}%`;
+          scoreIndicator.style.fontSize = "10px";
+          scoreIndicator.style.color = "#065fd4";
+          scoreIndicator.style.marginLeft = "auto";
+          cue.appendChild(scoreIndicator);
+        } else {
+          cue.style.display = "none";
+        }
+      });
+    } else {
+      // No results found
+      const noResults = document.createElement("div");
+      noResults.className = "no-results";
+      noResults.textContent = "No matching segments found.";
+      noResults.style.padding = "16px";
+      noResults.style.color = "#666";
+      content.appendChild(noResults);
+    }
+  } catch (error) {
+    console.error("Error in semantic search:", error);
+
+    // Remove searching indicator
+    content.removeChild(searchingIndicator);
+
+    // Show error message
+    const errorMsg = document.createElement("div");
+    errorMsg.className = "search-error";
+    errorMsg.textContent = "Error performing search. Try a different query.";
+    errorMsg.style.padding = "16px";
+    errorMsg.style.color = "red";
+    content.appendChild(errorMsg);
+  }
+}
+
+// Simple TF-IDF based search for semantic matching
+function simpleTfIdfSearch(query, segments) {
+  // Tokenize the query and segments
+  const queryTokens = tokenize(query);
+  const segmentTokens = segments.map((s) => ({
+    ...s,
+    tokens: tokenize(s.text),
+  }));
+
+  // Calculate IDF for each term in the corpus
+  const termFrequency = {};
+  queryTokens.forEach((token) => {
+    termFrequency[token] = 0;
+    segmentTokens.forEach((segment) => {
+      if (segment.tokens.includes(token)) {
+        termFrequency[token]++;
+      }
+    });
+  });
+
+  const totalDocs = segments.length;
+  const idf = {};
+  Object.keys(termFrequency).forEach((term) => {
+    idf[term] = Math.log(totalDocs / (1 + termFrequency[term]));
+  });
+
+  // Calculate TF-IDF scores for each segment
+  const results = segmentTokens.map((segment) => {
+    let score = 0;
+
+    // Calculate cosine similarity between query and segment
+    queryTokens.forEach((token) => {
+      const tf =
+        segment.tokens.filter((t) => t === token).length /
+        segment.tokens.length;
+      score += tf * (idf[token] || 0);
+    });
+
+    // Normalize by segment length
+    score = score / (segment.tokens.length + queryTokens.length);
+
+    return {
+      id: segment.id,
+      time: segment.time,
+      text: segment.text,
+      score: score,
+    };
+  });
+
+  // Sort by score and filter to only those with a score
+  const filteredResults = results
+    .filter((r) => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10); // Limit to top 10 results
+
+  return filteredResults;
+}
+
+// Simple tokenization for the TF-IDF search
+function tokenize(text) {
+  // Convert to lowercase, remove special characters, and split into words
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, "")
+    .split(/\s+/)
+    .filter((word) => word.length > 2); // Filter out very short words
 }
 
 // Find the main video element on the page

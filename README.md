@@ -1,84 +1,126 @@
-# Video Transcript Viewer Chrome Extension
+# AI Video Transcript Assistant
 
-A Chrome extension that displays video transcripts alongside videos, similar to YouTube's transcript feature.
+## Current Vision
 
-## Features
+A Chrome extension that transforms video watching into an interactive learning experience through AI-powered transcript analysis and real-time insights.
 
-- Displays transcript text alongside videos in a convenient side panel
-- Auto-highlights the current transcript section as the video plays
-- Click on any transcript segment to jump to that part of the video
-- **AI-powered semantic search** to find content using natural language queries
-- Toggle between keyword search and semantic search modes
-- Search within the transcript to find specific content
-- Toggle timestamps on/off
-- Works on YouTube and other video sites with transcript elements
-- Context menu option for quick access
+## Core Features
 
-## Installation
+### 1. AI-Powered Analysis
 
-1. Download or clone this repository to your local machine
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode" by toggling the switch in the top right corner
-4. Click "Load unpacked" and select the folder containing the extension files
-5. The extension should now be installed and visible in your Chrome toolbar
+- Real-time Q&A about video content using Perplexity API
+- Fact-checking overlay for outdated/incorrect information
+- "Smart Context" feature showing relevant updates
+- Semantic search within transcript using local embeddings
+- Highlighted relevant sections in transcript
 
-## How to Use
+### 2. Learning Tools
 
-### Basic Usage
+- Markdown note-taking synchronized with timestamps
+- AI-suggested tags for notes
+- Transcript caching for offline access
 
-1. Navigate to a video website (like YouTube)
-2. Click the Video Transcript Viewer icon in your Chrome toolbar
-3. Click "Show Transcript Panel"
-4. The transcript panel will appear on the right side of the screen
-5. As the video plays, the current section of the transcript will be highlighted
-6. Click on any transcript segment to jump to that part of the video
-7. Use the search box to find specific text in the transcript
+### 3. Video Support
 
-### Semantic Search
+- YouTube integration
+- Vimeo support
+- Generic HTML5 video players
+- Universal transcript extraction
 
-The extension includes an AI-powered semantic search feature that allows you to search using natural language:
+### 4. User Features
 
-1. Make sure the "AI Semantic Search" checkbox is selected (it's on by default)
-2. Type natural language queries like:
-   - "discussion about climate change"
-   - "when they talk about the future plans"
-   - "find the part where they mention statistics"
-3. The extension will analyze your query and show the most relevant transcript segments
-4. Each result includes a match score to indicate relevance
-5. Click any result to jump to that part of the video
+- Social authentication (Google, GitHub)
+- Personal API key management
+- User preferences storage
+- Watch history with AI insights
 
-For exact keyword matching, uncheck the "AI Semantic Search" option.
+## Technical Stack
 
-### On YouTube
+- Backend: GCP
+- Authentication: Social Auth
+- AI: Perplexity API + Local Embeddings
+- Storage: User preferences, search history, watched videos
 
-The extension will automatically detect when you're on a YouTube video page and show a transcript button. When you click it:
+## Rate Limiting
 
-1. If a transcript is available, it will be displayed in the panel
-2. The panel will highlight the current segment being spoken in the video
-3. You can click on any segment to jump to that part of the video
+- API calls limited per user/time window
+- Cached transcripts to reduce API load
+- Local processing when possible
 
-### Context Menu Option
+## Privacy Requirements
 
-You can also right-click anywhere on a video page and select "Show Video Transcript" from the context menu.
+1. User Data Storage
 
-## Settings
+   - Encrypted storage of API keys
+   - Minimal personal information collection
+   - Clear data retention policies
+   - Option for data export/deletion
 
-From the extension popup, you can adjust:
+2. Video Data
+   - Local caching with user consent
+   - Secure transmission of transcripts
+   - No permanent storage of video content
 
-- **Max Transcript Cues**: Increase this number if you have a longer video/transcript
-- **Delay between cues**: Adjust if transcript elements aren't loading properly
+## Future Features (Backlog)
 
-## Troubleshooting
+### Phase 1: Enhanced Learning
 
-- If no transcript is found, the extension will display a message in the panel
-- Some websites may not have transcript data accessible to the extension
-- If the transcript is not highlighting in sync with the video, try refreshing the page
-- The semantic search uses a simple algorithm that runs entirely in your browser. It works best with clear, concise queries.
+- Spaced repetition for key points
+- AI-generated practice questions
+- Learning path suggestions
+- Quiz generation
 
-## License
+### Phase 2: Collaboration
 
-This project is open source and available under the MIT License.
+- Collaborative note sharing
+- Team features for educational institutions
+- Integration with learning management systems
 
-## Credits
+### Phase 3: Advanced Features
 
-Created by [Your Name]
+- Custom LLM fine-tuning
+- Advanced learning analytics
+- Mobile application
+- Web dashboard for history/notes
+
+### Phase 4: Premium Features
+
+- Team/Enterprise plans
+- API access
+- Advanced analytics
+- Custom integrations
+
+## Fact-Checking Options
+
+1. Perplexity API (primary)
+2. Google Fact Check API
+3. NewsGuard API
+4. ClaimReview markup
+5. Custom fact-checking using multiple sources
+
+## Notes
+
+- Initial user base: 20-30 users
+- Users provide their own API keys initially
+- Focus on student and content creator needs
+- Privacy-first approach with local processing when possible
+
+## Development Priorities
+
+1. Core extension functionality
+2. Transcript extraction
+3. AI integration
+4. Note-taking features
+5. User authentication
+6. Data storage
+7. Rate limiting
+8. Caching system
+
+## Technical Debt Considerations
+
+- Scalable architecture for future growth
+- Modular design for feature additions
+- Testing infrastructure
+- Documentation
+- Security best practices
+- Performance monitoring
